@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var app = express_1.default();
-app.listen(4000, function () {
-    console.log('-- Server running on port 4000 --');
-});
+var express_1 = require("express");
+var repos_routes_1 = __importDefault(require("./repos.routes"));
+var routes = express_1.Router();
+routes.use('/repos', repos_routes_1.default);
+exports.default = routes;
