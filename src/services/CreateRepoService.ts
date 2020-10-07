@@ -1,23 +1,25 @@
 import { getRepository } from 'typeorm';
+import RetrieveStatsFromRepo from './RetrieveStatsFromRepo';
 import Repo from '../models/Repo';
-import api from '../api';
+import api from '../api/api';
 
 interface Response {
 
-  id_repository: number;
+  id: number;
 
   name: string;
 
   full_name: string;
 
+  description: string;
+
+  owner: {
+    avatar_url: string;
+  }
+
   html_url: string;
 
-  issues_open_count: number;
-
-  created_at: Date;
-
-  updated_at: Date;
-
+  open_issues: number;
 }
 
 class CreateRepoService {
@@ -25,36 +27,36 @@ class CreateRepoService {
 
     const reposRepository = getRepository(Repo);
 
-    const response = await api.get<Response>(`repos/${repositoryName}`)
-    .then()
-    .catch((err) => {
-      throw new Error(err.data.message);
-  });
+    const repoData = await api.get<Response>(`repos/${repositoryName}`);
 
-  const hasThisRepo = await reposRepository.findOne({
-    where: { full_name: repositoryName },
-  });
+    const repoAlreadyStored = await reposRepository.findOne({
+      where: { full_name: repositoryName },
+    });
 
-  if (hasThisRepo) {
-    return hasThisRepo;
-  }
+    if (repoAlreadyStored) {
 
+      throw new Error('Project already stored.');
 
+    }
 
-  const repo = await reposRepository.create({
-    id_repository: response.data.id,
-    name: response.data.name,
-    full_name: response.data.full_name,
-    html_url: response.data.html_url,
-    issues_open_count: response.data.open_issues_count,
-    created_at: response.data.created_at,
-    updated_at: response.data.updated_at
+    const {id, name, full_name, description, owner, html_url } = repoData.data;
 
-  });
+    const repo = reposRepository.create({
+      id_repository: id,
+      name,
+      full_name,
+      description,
+      avatar_url: owner.avatar_url,
+      html_url,
+    });
 
-  await reposRepository.save(repo);
+    await reposRepository.save(repo);
 
-  return repo;
+    const retrieveStatsFromRepo = new RetrieveStatsFromRepo();
+
+    await retrieveStatsFromRepo.execute(repositoryName);
+
+    return repo;
 
   }
 }

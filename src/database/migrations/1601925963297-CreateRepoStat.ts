@@ -1,11 +1,11 @@
 import {MigrationInterface, QueryRunner, Table, TableForeignKey} from "typeorm";
 
-export default class CreateRepository1601855056280 implements MigrationInterface {
+export class CreateRepoStat1601925963297 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
       await queryRunner.createTable(
         new Table({
-          name: 'repositories',
+          name: 'repo_stats',
           columns: [
             {
               name: 'id',
@@ -15,30 +15,22 @@ export default class CreateRepository1601855056280 implements MigrationInterface
               default: 'uuid_generate_v4()',
             },
             {
-              name: 'id_repository',
+              name: 'id_repo',
+              type: 'uuid',
+            },
+            {
+              name: 'total_open_issues',
               type: 'integer',
-            },
-            {
-              name: 'name',
-              type: 'varchar',
-            },
-            {
-              name: 'full_name',
-              type: 'varchar',
-            },
-            {
-              name: 'description',
-              type: 'varchar',
               isNullable: true,
             },
             {
-              name: 'avatar_url',
-              type: 'varchar',
+              name: 'avg_time_open_issues',
+              type: 'numeric',
               isNullable: true,
             },
             {
-              name: 'html_url',
-              type: 'varchar',
+              name: 'std_open_issues',
+              type: 'numeric',
               isNullable: true,
             },
             {
@@ -54,10 +46,25 @@ export default class CreateRepository1601855056280 implements MigrationInterface
           ],
         }),
       );
+
+      await queryRunner.createForeignKey(
+        'repo_stats',
+        new TableForeignKey({
+          name: 'RepositoryId',
+          columnNames: ['id_repo'],
+          referencedColumnNames: ['id'],
+          referencedTableName: 'repositories',
+          onDelete: 'SET NULL',
+          onUpdate: 'CASCADE',
+        }),
+      );
+
     }
 
+
     public async down(queryRunner: QueryRunner): Promise<void> {
-      await queryRunner.dropTable('repositories');
+      await queryRunner.dropForeignKey('repo_stats', 'RepositoryId');
+      await queryRunner.dropTable('repo_stats');
     }
 
 }

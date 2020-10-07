@@ -15,10 +15,13 @@ class Repos {
   full_name: string;
 
   @Column()
-  html_url: string;
+  description: string;
 
   @Column()
-  issues_open_count: number;
+  avatar_url: string;
+
+  @Column()
+  html_url: string;
 
   @CreateDateColumn()
   created_at: Date;
