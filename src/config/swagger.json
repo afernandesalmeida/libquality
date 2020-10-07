@@ -1,0 +1,131 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Libquality",
+    "description": "Getting stats from any open project on Github",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "localhost:4000",
+  "basePath": "/",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/repos": {
+      "post": {
+        "tags": [
+          "Repository"
+        ],
+        "summary": "Add a repository given full_name",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "repositoryName",
+            "schema": {
+              "$ref": "#/definitions/RepositoryRequest"
+            }
+          }
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RepositoryResponse"
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Repository Stats"
+        ],
+        "summary": "Get all repositories and stats",
+        "parameters": [
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RepositoryStatResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RepositoryRequest": {
+      "properties": {
+        "repositoryName": {
+          "type": "string"
+        }
+      }
+    },
+    "RepositoryResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "id_repository": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        },
+        "full_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "avatar_url": {
+          "type": "string"
+        },
+        "html_url": {
+          "type": "string"
+        }
+      }
+    },
+    "RepositoryStatResponse": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "total_open_issues": {
+            "type": "number"
+          },
+          "avg_time_open_issues": {
+            "type": "string"
+          },
+          "std_open_issues": {
+            "type": "string"
+          }
+        }
+      }
+
+    }
+  }
+}

@@ -1,19 +1,18 @@
 import express from 'express';
 import cron from 'node-cron';
 import './database';
-import routes from './routes'
-import RetrieveStatsFromRepo from './services/RetrieveStatsFromRepo';
+import routes from './routes';
+import * as swStats from 'swagger-stats';
+import * as Subscribers from './subscribers/ScheduleTasks';
+import * as swagerDocument from './config/swagger.json';
 
 const app = express();
 app.use(express.json());
-
+app.use(swStats.getMiddleware({swaggerSpec:swagerDocument}));
 app.use(routes);
 
-cron.schedule('0,20,40 * * * *', async () => {
-  const retrieveStatsFromRepo = new RetrieveStatsFromRepo();
-
-  const stat = await retrieveStatsFromRepo.execute('facebook/react');
-  console.log(stat);
+cron.schedule('0 3 * * *', async () => {
+  Subscribers.getStatsFromRepo();
 
 });
 

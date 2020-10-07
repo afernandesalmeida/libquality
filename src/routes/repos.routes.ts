@@ -44,7 +44,6 @@ reposRouter.get('/', async (request, response) => {
   _map(actualReposStats, el => allRepoStats.push(...el))
 
   const mergedRepo = reposInfo.map((item, i) => Object.assign({}, item, allRepoStats[i]));
-  console.log(mergedRepo);
 
   return response.json(mergedRepo);
 } catch (error) {
